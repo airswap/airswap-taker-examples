@@ -1,0 +1,28 @@
+{
+  "name": "airswap-taker-examples",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@airswap/clients": "^0.3.1",
+    "@airswap/constants": "^0.1.0",
+    "@airswap/utils": "^0.1.0",
+    "dotenv": "^8.2.0",
+    "ethers": "^4.0.44",
+    "tslib": "^1.10.0"
+  },
+  "scripts": {
+    "compile": "tsc -b",
+    "lint": "eslint \"./scripts/**/*.ts\"",
+    "server:liquidity": "yarn compile && node build/server-liquidity.js",
+    "server:order": "yarn compile && node build/server-order.js",
+    "delegate:liquidity": "yarn compile && node build/delegate-liquidity.js",
+    "delegate:order": "yarn compile && node build/delegate-order.js"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.8.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1"
+  }
+}
