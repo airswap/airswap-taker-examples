@@ -1,9 +1,13 @@
+import { Indexer, Server, Swap } from '@airswap/protocols'
+import { Order } from '@airswap/types'
+import { chainIds, rinkebyTokens } from '@airswap/constants'
+import {
+  toAtomicString,
+  getBestByLowestSenderAmount,
+  getEtherscanURL,
+} from '@airswap/utils'
 import { ethers } from 'ethers'
 import { BigNumber } from 'ethers/utils'
-import { Indexer, Server, Swap } from '@airswap/protocols'
-import { toAtomicString, getBestByLowestSenderAmount } from '@airswap/utils'
-import { chainIds, rinkebyTokens, etherscanDomains } from '@airswap/constants'
-import { Order } from '@airswap/types'
 
 import dotenv from 'dotenv'
 
@@ -58,7 +62,7 @@ takeBestServerOrder(
   rinkebyTokens.WETH.address,
 ).then(hash => {
   if (hash) {
-    console.log(`https://${etherscanDomains[chainIds.RINKEBY]}/tx/${hash}`)
+    console.log(getEtherscanURL(chainIds.RINKEBY, hash))
   } else {
     console.log('No valid orders found.')
   }

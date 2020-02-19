@@ -1,7 +1,7 @@
 import { Indexer, Delegate } from '@airswap/protocols'
+import { Quote } from '@airswap/types'
 import { rinkebyTokens, protocols } from '@airswap/constants'
 import { toDecimalString, getTotalBySenderAmount } from '@airswap/utils'
-import { Quote } from '@airswap/types'
 
 async function getDelegateLiquidity(signerToken: string, senderToken: string) {
   // Fetch Delegate locators from the Rinkeby Indexer

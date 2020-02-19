@@ -1,4 +1,5 @@
 import { Indexer, Delegate, Swap } from '@airswap/protocols'
+import { Quote, Order } from '@airswap/types'
 import { chainIds, rinkebyTokens, protocols } from '@airswap/constants'
 import {
   createOrderForQuote,
@@ -7,7 +8,6 @@ import {
   getEtherscanURL,
   toAtomicString,
 } from '@airswap/utils'
-import { Quote, Order } from '@airswap/types'
 import { ethers } from 'ethers'
 import { BigNumber } from 'ethers/utils'
 

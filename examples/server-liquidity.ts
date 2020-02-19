@@ -1,7 +1,7 @@
 import { Indexer, Server } from '@airswap/protocols'
-import { toDecimalString, getTotalBySignerAmount } from '@airswap/utils'
-import { rinkebyTokens } from '@airswap/constants'
 import { Quote } from '@airswap/types'
+import { rinkebyTokens } from '@airswap/constants'
+import { toDecimalString, getTotalBySignerAmount } from '@airswap/utils'
 
 async function getServerLiquidity(signerToken: string, senderToken: string) {
   // Fetch Server locators from the Rinkeby Indexer
