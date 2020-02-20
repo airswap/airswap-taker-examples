@@ -51,7 +51,7 @@ async function takeBestDelegateQuote(
 
   if (best) {
     // Load a wallet using ethers.js
-    const signer = new ethers.Wallet(
+    const wallet = new ethers.Wallet(
       process.env.ETHEREUM_ACCOUNT || '',
       ethers.getDefaultProvider('rinkeby'),
     )
@@ -59,12 +59,12 @@ async function takeBestDelegateQuote(
     // Construct a Delegate using the best locator
     const delegate = new Delegate(best.locator)
     const order: Order = await signOrder(
-      createOrderForQuote(best, signer.address, await delegate.getWallet()),
-      signer,
+      createOrderForQuote(best, wallet.address, await delegate.getWallet()),
+      wallet,
       Swap.getAddress(),
     )
     // Provide order to the Delegate
-    return await delegate.provideOrder(order, signer)
+    return await delegate.provideOrder(order, wallet)
   }
 }
 

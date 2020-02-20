@@ -22,7 +22,7 @@ async function takeBestServerOrder(
   senderToken: string,
 ) {
   // Load a wallet using ethers.js
-  const signer = new ethers.Wallet(
+  const wallet = new ethers.Wallet(
     process.env.ETHEREUM_ACCOUNT || '',
     ethers.getDefaultProvider('rinkeby'),
   )
@@ -39,7 +39,7 @@ async function takeBestServerOrder(
           signerAmount,
           signerToken,
           senderToken,
-          signer.address,
+          wallet.address,
         ),
       )
     } catch (error) {
@@ -51,7 +51,7 @@ async function takeBestServerOrder(
   const best = getBestByLowestSenderAmount(orders)
 
   if (best) {
-    return await new Swap().swap(best, signer)
+    return await new Swap().swap(best, wallet)
   }
 }
 
