@@ -1,4 +1,4 @@
-import { Indexer, Server, Swap } from '@airswap/protocols'
+import { Indexer, Server, Swap, Validator } from '@airswap/protocols'
 import { Order } from '@airswap/types'
 import { chainIds, rinkebyTokens } from '@airswap/constants'
 import {
@@ -51,7 +51,19 @@ async function takeBestServerOrder(
   const best = getBestByLowestSenderAmount(orders)
 
   if (best) {
-    return await new Swap().swap(best, wallet)
+    // Do a pre-swap check for any errors that would occur
+    const errors = await new Validator().checkSwap(best)
+    if (errors.length) {
+      console.log('Unable to take (as sender) for the following reasons\n')
+      for (const error of errors) {
+        console.log('·', Validator.getReason(error))
+      }
+      console.log()
+    } else {
+      return await new Swap().swap(best, wallet)
+    }
+  } else {
+    console.log('No valid order found')
   }
 }
 
@@ -63,7 +75,5 @@ takeBestServerOrder(
 ).then(hash => {
   if (hash) {
     console.log(getEtherscanURL(chainIds.RINKEBY, hash))
-  } else {
-    console.log('No valid orders found.')
   }
 })

@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@airswap/constants": "^0.3.1",
-    "@airswap/protocols": "^0.3.6",
+    "@airswap/protocols": "^0.4.2",
     "@airswap/types": "^3.5.9",
     "@airswap/utils": "^0.3.7",
     "dotenv": "^8.2.0"

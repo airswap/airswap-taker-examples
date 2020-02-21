@@ -1,4 +1,4 @@
-import { Indexer, Delegate, Swap } from '@airswap/protocols'
+import { Indexer, Delegate, Swap, Validator } from '@airswap/protocols'
 import { Quote, Order } from '@airswap/types'
 import { chainIds, rinkebyTokens, protocols } from '@airswap/constants'
 import {
@@ -63,8 +63,21 @@ async function takeBestDelegateQuote(
       wallet,
       Swap.getAddress(),
     )
-    // Provide order to the Delegate
-    return await delegate.provideOrder(order, wallet)
+
+    // Do a pre-swap check for any errors that would occur
+    const errors = await new Validator().checkDelegate(best, best.locator)
+    if (errors.length) {
+      console.log('Unable to take (as sender) for the following reasons\n')
+      for (const error of errors) {
+        console.log('·', Validator.getReason(error))
+      }
+      console.log()
+    } else {
+      // Provide order to the Delegate
+      return await delegate.provideOrder(order, wallet)
+    }
+  } else {
+    console.log('No valid quotes found')
   }
 }
 
@@ -76,7 +89,5 @@ takeBestDelegateQuote(
 ).then(hash => {
   if (hash) {
     console.log(getEtherscanURL(chainIds.RINKEBY, hash))
-  } else {
-    console.log('No valid quotes found.')
   }
 })
