@@ -19,19 +19,19 @@ if (!process.env.ETHEREUM_ACCOUNT) {
 async function takeBestServerOrder(
   signerAmount: string,
   signerToken: string,
-  senderToken: string,
+  senderToken: string
 ) {
   // Load a wallet using ethers.js
   const wallet = new ethers.Wallet(
     process.env.ETHEREUM_ACCOUNT || '',
-    ethers.getDefaultProvider('rinkeby'),
+    ethers.getDefaultProvider('rinkeby')
   )
 
   // Fetch Server locators from the Rinkeby Indexer
   const { locators } = await new Indexer().getLocators(signerToken, senderToken)
 
   // Iterate to get orders from all Servers.
-  let orders: Array<Order> = []
+  const orders: Array<Order> = []
   for (const locator of locators) {
     try {
       orders.push(
@@ -39,10 +39,12 @@ async function takeBestServerOrder(
           signerAmount,
           signerToken,
           senderToken,
-          wallet.address,
-        ),
+          wallet.address
+        )
       )
+      console.log(`[ ✓ Order Received from ${locator} ]`)
     } catch (error) {
+      console.log(`[ ✗ Error (${error.code}) ${locator}: ${error.message} ]`)
       continue
     }
   }
@@ -54,7 +56,9 @@ async function takeBestServerOrder(
     // Do a pre-swap check for any errors that would occur
     const errors = await new Validator().checkSwap(best)
     if (errors.length) {
-      console.log('Unable to take (as sender) for the following reasons\n')
+      console.log(
+        '\nUnable to take best order (as sender) for the following reasons\n'
+      )
       for (const error of errors) {
         console.log('·', Validator.getReason(error))
       }
@@ -63,7 +67,7 @@ async function takeBestServerOrder(
       return await new Swap().swap(best, wallet)
     }
   } else {
-    console.log('No valid order found')
+    console.log('\nNo valid orders found\n')
   }
 }
 
@@ -71,7 +75,7 @@ async function takeBestServerOrder(
 takeBestServerOrder(
   toAtomicString(new BigNumber(1), rinkebyTokens.DAI.decimals),
   rinkebyTokens.DAI.address,
-  rinkebyTokens.WETH.address,
+  rinkebyTokens.WETH.address
 ).then(hash => {
   if (hash) {
     console.log(getEtherscanURL(chainIds.RINKEBY, hash))
