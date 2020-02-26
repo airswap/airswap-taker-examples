@@ -21,25 +21,25 @@ if (!process.env.ETHEREUM_ACCOUNT) {
 async function takeBestDelegateQuote(
   senderAmount: string,
   senderToken: string,
-  signerToken: string,
+  signerToken: string
 ) {
   // Fetch Server locators from the Rinkeby Indexer
   const { locators } = await new Indexer().getLocators(
     signerToken,
     senderToken,
-    protocols.DELEGATE,
+    protocols.DELEGATE
   )
 
   // Iterate through Delegates to get quotes
   const quotes: Array<Quote> = []
-  for (let locator of locators) {
+  for (const locator of locators) {
     try {
       quotes.push(
         await new Delegate(locator).getSignerSideQuote(
           senderAmount,
           signerToken,
-          senderToken,
-        ),
+          senderToken
+        )
       )
     } catch (error) {
       continue
@@ -53,7 +53,7 @@ async function takeBestDelegateQuote(
     // Load a wallet using ethers.js
     const wallet = new ethers.Wallet(
       process.env.ETHEREUM_ACCOUNT || '',
-      ethers.getDefaultProvider('rinkeby'),
+      ethers.getDefaultProvider('rinkeby')
     )
 
     // Construct a Delegate using the best locator
@@ -61,13 +61,15 @@ async function takeBestDelegateQuote(
     const order: Order = await signOrder(
       createOrderForQuote(best, wallet.address, await delegate.getWallet()),
       wallet,
-      Swap.getAddress(),
+      Swap.getAddress()
     )
 
     // Do a pre-swap check for any errors that would occur
     const errors = await new Validator().checkDelegate(best, best.locator)
     if (errors.length) {
-      console.log('Unable to take (as sender) for the following reasons\n')
+      console.log(
+        '\nUnable to take best order (as sender) for the following reasons\n'
+      )
       for (const error of errors) {
         console.log('·', Validator.getReason(error))
       }
@@ -77,7 +79,7 @@ async function takeBestDelegateQuote(
       return await delegate.provideOrder(order, wallet)
     }
   } else {
-    console.log('No valid quotes found')
+    console.log('\nNo valid quotes found\n')
   }
 }
 
@@ -85,7 +87,7 @@ async function takeBestDelegateQuote(
 takeBestDelegateQuote(
   toAtomicString(new BigNumber(1), rinkebyTokens.WETH.decimals),
   rinkebyTokens.WETH.address,
-  rinkebyTokens.DAI.address,
+  rinkebyTokens.DAI.address
 ).then(hash => {
   if (hash) {
     console.log(getEtherscanURL(chainIds.RINKEBY, hash))

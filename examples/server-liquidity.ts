@@ -9,23 +9,25 @@ async function getServerLiquidity(signerToken: string, senderToken: string) {
 
   // Iterate through Servers to get quotes
   const quotes: Array<Quote> = []
-  for (let locator of locators) {
+  for (const locator of locators) {
     try {
       quotes.push(
-        await new Server(locator).getMaxQuote(signerToken, senderToken),
+        await new Server(locator).getMaxQuote(signerToken, senderToken)
       )
+      console.log(`[ ✓ Quote Received from ${locator} ]`)
     } catch (error) {
+      console.log(`[ ✗ Error (${error.code}) ${locator}: ${error.message} ]`)
       continue
     }
   }
   return toDecimalString(
     getTotalBySignerAmount(quotes),
-    rinkebyTokens.DAI.decimals,
+    rinkebyTokens.DAI.decimals
   )
 }
 
 getServerLiquidity(rinkebyTokens.DAI.address, rinkebyTokens.WETH.address).then(
   amount => {
-    console.log(`${amount} DAI available for WETH from Servers on Rinkeby.`)
-  },
+    console.log(`\n${amount} DAI available for WETH from Servers on Rinkeby.\n`)
+  }
 )
