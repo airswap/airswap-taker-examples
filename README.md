@@ -1,4 +1,4 @@
-# AirSwap: Liquidity Taker Examples
+# AirSwap: Taker Examples
 
 Two examples of fetching available liquidity:
 
