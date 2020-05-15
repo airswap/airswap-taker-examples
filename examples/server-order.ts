@@ -1,6 +1,7 @@
 import { Indexer, Server, Swap, Validator } from '@airswap/protocols'
 import { Order } from '@airswap/types'
-import { chainIds, rinkebyTokens } from '@airswap/constants'
+import { chainIds } from '@airswap/constants'
+import TokenMetadata from '@airswap/metadata'
 import {
   toAtomicString,
   getBestByLowestSenderAmount,
@@ -28,7 +29,10 @@ async function takeBestServerOrder(
   )
 
   // Fetch Server locators from the Rinkeby Indexer
-  const { locators } = await new Indexer().getLocators(signerToken, senderToken)
+  const { locators } = await new Indexer(chainIds.RINKEBY).getLocators(
+    signerToken,
+    senderToken
+  )
 
   // Iterate to get orders from all Servers.
   const orders: Array<Order> = []
@@ -71,13 +75,18 @@ async function takeBestServerOrder(
   }
 }
 
-// Request to buy 1 DAI for WETH.
-takeBestServerOrder(
-  toAtomicString(new BigNumber(1), rinkebyTokens.DAI.decimals),
-  rinkebyTokens.DAI.address,
-  rinkebyTokens.WETH.address
-).then(hash => {
-  if (hash) {
-    console.log(getEtherscanURL(chainIds.RINKEBY, hash))
-  }
+const metadata = new TokenMetadata(chainIds.RINKEBY)
+metadata.fetchKnownTokens().then(() => {
+  const DAI = metadata.findTokensBySymbol('DAI').shift()
+  const WETH = metadata.findTokensBySymbol('WETH').shift()
+  // Request to buy 1 DAI for WETH.
+  takeBestServerOrder(
+    toAtomicString(new BigNumber(1), DAI.decimals),
+    DAI.address,
+    WETH.address
+  ).then(hash => {
+    if (hash) {
+      console.log(getEtherscanURL(chainIds.RINKEBY, hash))
+    }
+  })
 })

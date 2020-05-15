@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@airswap/constants": "^0.3.1",
+    "@airswap/metadata": "^0.1.10",
     "@airswap/protocols": "^0.4.2",
     "@airswap/types": "^3.5.9",
     "@airswap/utils": "^0.3.7",

@@ -1,11 +1,16 @@
 import { Indexer, Delegate } from '@airswap/protocols'
 import { Quote } from '@airswap/types'
-import { rinkebyTokens, protocols } from '@airswap/constants'
+import { chainIds, protocols } from '@airswap/constants'
+import TokenMetadata from '@airswap/metadata'
 import { toDecimalString, getTotalBySenderAmount } from '@airswap/utils'
 
-async function getDelegateLiquidity(signerToken: string, senderToken: string) {
+async function getDelegateLiquidity(
+  signerToken: string,
+  senderToken: string,
+  senderDecimals: number
+) {
   // Fetch Delegate locators from the Rinkeby Indexer
-  const { locators } = await new Indexer().getLocators(
+  const { locators } = await new Indexer(chainIds.RINKEBY).getLocators(
     signerToken,
     senderToken,
     protocols.DELEGATE
@@ -25,15 +30,16 @@ async function getDelegateLiquidity(signerToken: string, senderToken: string) {
     }
   }
 
-  return toDecimalString(
-    getTotalBySenderAmount(quotes),
-    rinkebyTokens.DAI.decimals
-  )
+  return toDecimalString(getTotalBySenderAmount(quotes), senderDecimals)
 }
 
-getDelegateLiquidity(
-  rinkebyTokens.DAI.address,
-  rinkebyTokens.WETH.address
-).then(amount => {
-  console.log(`${amount} DAI available for WETH from Delegates on Rinkeby.`)
+const metadata = new TokenMetadata(chainIds.RINKEBY)
+metadata.fetchKnownTokens().then(() => {
+  const DAI = metadata.findTokensBySymbol('DAI').shift()
+  const WETH = metadata.findTokensBySymbol('WETH').shift()
+  getDelegateLiquidity(DAI.address, WETH.address, WETH.decimals).then(
+    amount => {
+      console.log(`${amount} DAI available for WETH from Delegates on Rinkeby.`)
+    }
+  )
 })
